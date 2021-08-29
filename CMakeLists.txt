@@ -31,6 +31,7 @@ add_executable(
     ${HEADER_FILES}
     ${QT_FILES}
 )
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
 target_link_libraries(
   ${PROJECT_NAME}
@@ -52,3 +53,14 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
+
+if(WIN32)
+  add_custom_command(
+  TARGET ${PROJECT_NAME}
+  POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/platforms/
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      $<TARGET_FILE:Qt5::QWindowsIntegrationPlugin>
+      $<TARGET_FILE_DIR:${PROJECT_NAME}>/platforms/
+)
+ENDIF()
